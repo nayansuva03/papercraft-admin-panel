@@ -1,9 +1,18 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogOut } from "lucide-react";
+import { useAuth } from "../AuthContext";
 
 function Navbar() {
     const [menuOpen, setMenuOpen] = useState(false);
+    const { logout } = useAuth();
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        logout(); // Clear auth state from memory
+        navigate('/login');
+        setMenuOpen(false);
+    };
 
     const getLinkClass = ({ isActive }) =>
         `relative px-3 py-2 text-sm font-medium transition-colors duration-200 rounded-lg ${isActive
@@ -42,6 +51,16 @@ function Navbar() {
                         <NavLink to="/feedback" className={getLinkClass}>
                             Feedback
                         </NavLink>
+
+                        {/* Logout Button */}
+                        <button
+                            onClick={handleLogout}
+                            className="ml-2 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-lg transition-colors duration-200 flex items-center gap-2"
+                            title="Log out and return to login"
+                        >
+                            <LogOut className="w-4 h-4" />
+                            Logout
+                        </button>
                     </div>
 
                     {/* Mobile Menu Toggle Button */}
@@ -90,6 +109,15 @@ function Navbar() {
                             >
                                 Feedback
                             </NavLink>
+
+                            {/* Mobile Logout Button */}
+                            <button
+                                onClick={handleLogout}
+                                className="w-full mt-2 px-3 py-2 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+                            >
+                                <LogOut className="w-4 h-4" />
+                                Logout
+                            </button>
                         </div>
                     </div>
                 )}

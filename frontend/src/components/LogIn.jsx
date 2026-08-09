@@ -1,21 +1,25 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../AuthContext";
 
 function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
     const navigate = useNavigate();
+    const { login } = useAuth();
     const envUsername = import.meta.env.VITE_LOGIN_USERNAME;
     const envPassword = import.meta.env.VITE_LOGIN_PASSWORD;
 
     const handleLogin = (e) => {
         e.preventDefault();
-       
+        setError("");
+
         if (username === envUsername && password === envPassword) {
-            localStorage.setItem('isAuthenticated', 'true');
+            login(); // Update auth state in memory only
             navigate("/");
         } else {
-            alert("Wrong username or password");
+            setError("Wrong username or password");
         }
     };
 
@@ -32,6 +36,15 @@ function Login() {
                         Log In to access the <span className="text-indigo-600 dark:text-indigo-400 font-medium">PaperCraft Admin Panel</span>
                     </p>
                 </div>
+
+                {/* Error Message */}
+                {error && (
+                    <div className="p-3 rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800">
+                        <p className="text-sm font-medium text-red-600 dark:text-red-400">
+                            {error}
+                        </p>
+                    </div>
+                )}
 
                 {/* Form */}
                 <form onSubmit={handleLogin} className="space-y-4">
