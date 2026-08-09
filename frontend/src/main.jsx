@@ -6,6 +6,7 @@ import App from './App.jsx'
 import LogIn from './components/LogIn.jsx'
 import Users from './components/Users.jsx'
 import Feedback from './components/Feedback.jsx'
+import Dashboard from './components/Dashboard.jsx'
 import { AuthProvider } from './AuthContext.jsx'
 
 createRoot(document.getElementById('root')).render(
@@ -17,6 +18,7 @@ createRoot(document.getElementById('root')).render(
           <Route path="/" element={<App />} />
           <Route path="/users" element={<Users />} />
           <Route path="/feedback" element={<Feedback />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="*" element={<LogIn />} />
         </Routes>
       </BrowserRouter>
