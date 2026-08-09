@@ -58,6 +58,67 @@ app.get("/cloudinary/stats", async (req, res) => {
     }
 });
 
+// Get Gemini usage statistics
+app.get("/gemini/stats", async (req, res) => {
+    try {
+        const stats = await db
+            .collection("geminiusagemetadatas")
+            .aggregate([
+                {
+                    $group: {
+                        _id: null,
+
+                        inputTokens: {
+                            $sum: "$inputTokens"
+                        },
+
+                        outputTokens: {
+                            $sum: "$outputTokens"
+                        },
+
+                        totalTokens: {
+                            $sum: "$totalTokens"
+                        },
+
+                        errors: {
+                            $sum: {
+                                $cond: [
+                                    { $eq: ["$error", true] },
+                                    1,
+                                    0
+                                ]
+                            }
+                        }
+                    }
+                }
+            ])
+            .toArray();
+
+        if (stats.length === 0) {
+            return res.json({
+                inputTokens: 0,
+                outputTokens: 0,
+                totalTokens: 0,
+                errors: 0
+            });
+        }
+
+        res.json({
+            inputTokens: stats[0].inputTokens,
+            outputTokens: stats[0].outputTokens,
+            totalTokens: stats[0].totalTokens,
+            errors: stats[0].errors
+        });
+
+    } catch (error) {
+        console.error("Gemini stats error:", error);
+
+        res.status(500).json({
+            error: "Failed to fetch Gemini statistics"
+        });
+    }
+});
+
 
 // Get all users (username, email, createdAt)
 app.get("/users", async (req, res) => {
